@@ -472,11 +472,7 @@ def _is_classmethod_from_sig(function: AnyDecoratorCallable) -> bool:
     return False
 
 
-def unwrap_wrapped_function(
-    func: Any,
-    *,
-    unwrap_class_static_method: bool = True,
-) -> Any:
+def unwrap_wrapped_function(func: Any, *, unwrap_class_static_method: bool = True) -> Any:
     """
     Recursively unwraps a wrapped function until the underlying function is reached.
     This handles functools.partial, functools.partialmethod, staticmethod and classmethod.
@@ -501,10 +497,10 @@ def unwrap_wrapped_function(
         all = partial, partialmethod
 
     while isinstance(func, all):
-        if unwrap_class_static_method and isinstance(func, (classmethod, staticmethod)):
-            func = func.__func__
-        elif isinstance(func, (partial, partialmethod)):
+        if isinstance(func, (partial, partialmethod)):
             func = func.func
+        else:
+            func = func.__func__
 
     return func
 
